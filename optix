@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# Matrix
+blue="\033[0;34m"
+brightblue="\033[1;34m"
+cyan="\033[0;36m"
+brightcyan="\033[1;36m"
+green="\033[0;32m"
+brightgreen="\033[1;32m"
+red="\033[0;31m"
+brightred="\033[1;31m"
+white="\033[1;37m"
+black="\033[0;30m"
+grey="\033[0;37m"
+darkgrey="\033[1;30m"
+colors=($brightblue $blue $cyan $brightcyan)
+
+spacing=10
+scroll=0
+screenlines=$(expr `tput lines` - 1 + $scroll)
+screencols=$(expr `tput cols` / 2 - 1)
+
+chars=(0 1)
+
+count=${#chars[@]}
+colorcount=${#colors[@]}
+
+trap "tput sgr0; clear; exit" SIGTERM SIGINT
+
+matrix=1
+if [[ $1 =~ '-s' ]]; then
+	matrix=0
+fi
+
+clear
+tput cup 0 0
+x=0
+while [ $matrix -eq 1 ];
+	do for i in $(eval echo {1..$screenlines})
+		do for i in $(eval echo {1..$screencols})
+			do rand=$(($RANDOM%$spacing))
+				case $rand in
+					0)
+						printf "${colors[$RANDOM%$colorcount]}${chars[$RANDOM%$count]} "
+            x=$((x+1))
+            if [ $x -ge 10000 ]; then
+              matrix=0
+            fi
+						;;
+					1)
+						printf "  "
+						;;
+					*)
+						printf "\033[2C"
+						;;
+				esac
+			done
+			printf "\n"
+		done
+		tput cup 0 0
+	done
+  clear
+
+# Send to python
