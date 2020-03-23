@@ -60,5 +60,3 @@ while [ $matrix -eq 1 ];
 		tput cup 0 0
 	done
   clear
-
-# Send to python
